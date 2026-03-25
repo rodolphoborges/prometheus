@@ -1,4 +1,4 @@
-![Project Banner](file:///C:/Users/rodol/.gemini/antigravity/brain/4e79c169-586b-44b5-93f2-3356e51f4680/project_banner_1774465258625.png)
+![Project Banner](assets/banner.png)
 
 # PROMETHEUS: Protheus Automation Framework
 
