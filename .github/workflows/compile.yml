@@ -1,4 +1,28 @@
-- name: Compilar no Protheus via NAT
+name: Compilar Protheus via GitHub
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Instalar TDS-CLI (TOTVS)
         run: |
-          # O GitHub vai conectar no seu roteador, que vai jogar pro seu Docker
-          tds-cli compile --server ${{ secrets.MEU_DDNS_URL }} --port 1234 ...
+          # Baixa o TDS-CLI para Linux (GitHub Actions roda em Ubuntu)
+          wget https://github.com/totvs/tds-vscode/raw/master/tds-cli/bin/linux/tds-cli -O tds-cli
+          chmod +x tds-cli
+
+      - name: Compilar Fontes no Protheus Remoto
+        run: |
+          ./tds-cli compile \
+            --server ${{ secrets.PROTHEUS_SERVER }} \
+            --port 1234 \
+            --environment ${{ secrets.PROTHEUS_ENV }} \
+            --user ${{ secrets.PROTHEUS_USER }} \
+            --password "${{ secrets.PROTHEUS_PASS }}" \
+            --program "${{ github.workspace }}/src" \
+            --include "https://raw.githubusercontent.com/rodolphoborges/prometheus/main/includes" \
+            --save-logs
