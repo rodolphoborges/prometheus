@@ -21,9 +21,10 @@ jobs:
         run: |
           chmod +x ./bin/advpls
           
-          # Criar script de execução via printf (Garante CRLF e parâmetros mandatórios para Release 2310)
-          printf "[ACTION_01]\r\naction=authentication\r\nserver=%s\r\nport=1234\r\nsecure=1\r\nbuild=7.00.210324P\r\nenvironment=%s\r\nuser=%s\r\npsw=%s\r\n\r\n[ACTION_02]\r\naction=compile\r\nprogram=%s/src\r\nincludes=%s/includes\r\nrecompile=T\r\n" \
-            "$SERVER" "$ENV" "$USER_NAME" "$PASSWORD" "$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE" > compile_script.ini
+          # Criar script de execução usando printf (Esquema robusto de 3 ações para diagnóstico e autenticação)
+          # Inclui 'validate' para detecção de build e chaves híbridas para garantir o reconhecimento das credenciais.
+          printf "[validate]\r\naction=validate\r\nserver=%s\r\nport=1234\r\n\r\n[authentication]\r\naction=authentication\r\nserver=%s\r\nport=1234\r\nsecure=0\r\nbuild=AUTO\r\nenvironment=%s\r\nuser=%s\r\nusername=%s\r\npsw=%s\r\npassword=%s\r\n\r\n[compile]\r\naction=compile\r\nprogram=%s/src\r\nincludes=%s/includes\r\nrecompile=T\r\n" \
+            "$SERVER" "$SERVER" "$ENV" "$USER_NAME" "$USER_NAME" "$PASSWORD" "$PASSWORD" "$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE" > compile_script.ini
           
           # Garantir encoding CP1252 (ANSI) - Requisito estrito do advpls
           iconv -f UTF-8 -t CP1252 compile_script.ini > compile_script_ansi.ini
