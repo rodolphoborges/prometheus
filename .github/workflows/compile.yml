@@ -21,9 +21,10 @@ jobs:
         run: |
           chmod +x ./bin/advpls
           
-          # Criar template do script para o envsubst (evita substituição acidental de caracteres especiais shell)
+          # Criar template do script (formato oficial TDS-LS para o modo cli)
           cat <<'EOF' > compile_script.template
-          [authentication]
+          [ACTION_01]
+          action=authentication
           server=$SERVER
           port=1234
           secure=0
@@ -31,7 +32,7 @@ jobs:
           user=$USER_NAME
           psw=$PASSWORD
           
-          [compile]
+          [ACTION_02]
           action=compile
           program=${GITHUB_WORKSPACE}/src
           includes=${GITHUB_WORKSPACE}/includes
@@ -44,5 +45,5 @@ jobs:
           # O TDS-CLI (LS) exige encoding CP1252 para scripts de execução
           iconv -f UTF-8 -t CP1252 compile_script.ini > compile_script_ansi.ini
           
-          # Executar compilação com log habilitado para diagnóstico em caso de falha
+          # Executar compilação com log habilitado para diagnóstico
           ./bin/advpls cli compile_script_ansi.ini --log-file advpls.log || (echo "--- LOG DE ERRO ---" && cat advpls.log && exit 1)
