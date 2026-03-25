@@ -13,17 +13,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: "Configurar Permissoes e Compilar"
+        env:
+          SERVER: ${{ secrets.PROTHEUS_SERVER }}
+          ENV: ${{ secrets.PROTHEUS_ENV }}
+          USER_NAME: ${{ secrets.PROTHEUS_USER }}
+          PASSWORD: ${{ secrets.PROTHEUS_PASS }}
         run: |
           chmod +x ./bin/advpls
           
-          # Ajuste para o modo legacy do advpls
-          ./bin/advpls tds-cli --tds-cli-arguments \
-            compile \
-            --server ${{ secrets.PROTHEUS_SERVER }} \
-            --port 1234 \
-            --environment ${{ secrets.PROTHEUS_ENV }} \
-            --user ${{ secrets.PROTHEUS_USER }} \
-            --password "${{ secrets.PROTHEUS_PASS }}" \
-            --program "${{ github.workspace }}/src" \
-            --include "${{ github.workspace }}/includes" \
-            --save-logs
+          # Ajuste para o modo legacy do advpls (Argumentos devem estar em uma única string)
+          ./bin/advpls --tds-cli-arguments "compile --server $SERVER --port 1234 --environment $ENV --user $USER_NAME --password \"$PASSWORD\" --program \"${{ github.workspace }}/src\" --include \"${{ github.workspace }}/includes\" --save-logs" tds-cli
