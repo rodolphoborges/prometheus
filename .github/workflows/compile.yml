@@ -1,4 +1,18 @@
-- name: "Configurar Permissoes e Compilar"
+name: Compile Protheus
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: "Configurar Permissoes e Compilar"
         run: |
           chmod +x ./bin/advpls
           
