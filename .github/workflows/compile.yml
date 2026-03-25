@@ -21,34 +21,16 @@ jobs:
         run: |
           chmod +x ./bin/advpls
           
-          # Criar template do script (Híbrido: satisfaz versões antigas e novas parsers)
-          cat <<'EOF' > compile_script.template
-          [authentication]
-          action=authentication
-          server=$SERVER
-          port=1234
-          secure=0
-          environment=$ENV
-          user=$USER_NAME
-          psw=$PASSWORD
+          # Criar script de execução usando printf (Garante CRLF e evita problemas de expansão do shell)
+          printf "[ACTION_01]\r\naction=authentication\r\nserver=%s\r\nport=1234\r\nsecure=0\r\nenvironment=%s\r\nuser=%s\r\npsw=%s\r\n\r\n[ACTION_02]\r\naction=compile\r\nprogram=%s/src\r\nincludes=%s/includes\r\nrecompile=T\r\n" \
+            "$SERVER" "$ENV" "$USER_NAME" "$PASSWORD" "$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE" > compile_script.ini
           
-          [compile]
-          action=compile
-          program=${GITHUB_WORKSPACE}/src
-          includes=${GITHUB_WORKSPACE}/includes
-          recompile=T
-          EOF
-          
-          # Injetar variáveis de ambiente de forma segura
-          envsubst < compile_script.template > compile_script.ini
-          
-          # Converter para CRLF (Windows) e CP1252 (ANSI) - Essencial para ferramentas TOTVS
-          sed -i 's/$/\r/' compile_script.ini
+          # Garantir encoding CP1252 (ANSI) - Requisito estrito do advpls
           iconv -f UTF-8 -t CP1252 compile_script.ini > compile_script_ansi.ini
           
-          # Debug: Verificar o script gerado
-          echo "--- DEBUG: SCRIPT TEMPLATE ---"
-          cat compile_script.ini
+          # Debug: Confirmar o arquivo gerado (Sem exibir conteúdo sensível)
+          echo "--- DEBUG: STATUS ---"
+          ls -l $(pwd)/compile_script_ansi.ini
           
-          # Executar compilação (Modo cli com log ao final)
-          ./bin/advpls cli compile_script_ansi.ini --log-file advpls.log || (echo "--- LOG DE ERRO ---" && cat advpls.log && exit 1)
+          # Executar compilação com caminho ABSOLUTO para o script
+          ./bin/advpls cli "$(pwd)/compile_script_ansi.ini" --log-file advpls.log || (echo "--- LOG DE ERRO ---" && cat advpls.log && exit 1)
