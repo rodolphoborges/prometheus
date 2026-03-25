@@ -21,8 +21,8 @@ jobs:
         run: |
           chmod +x ./bin/advpls
           
-          # Criar script de execução para o modo cli (mais robusto para automação)
-          cat <<EOF > compile_script.ini
+          # Criar template do script para o envsubst (evita substituição acidental de caracteres especiais shell)
+          cat <<'EOF' > compile_script.template
           [authentication]
           server=$SERVER
           port=1234
@@ -38,8 +38,11 @@ jobs:
           recompile=T
           EOF
           
+          # Injetar variáveis de ambiente de forma segura
+          envsubst < compile_script.template > compile_script.ini
+          
           # O TDS-CLI (LS) exige encoding CP1252 para scripts de execução
           iconv -f UTF-8 -t CP1252 compile_script.ini > compile_script_ansi.ini
           
-          # Executar compilação via modo cli
-          ./bin/advpls cli compile_script_ansi.ini
+          # Executar compilação com log habilitado para diagnóstico em caso de falha
+          ./bin/advpls cli compile_script_ansi.ini --log-file advpls.log || (echo "--- LOG DE ERRO ---" && cat advpls.log && exit 1)
