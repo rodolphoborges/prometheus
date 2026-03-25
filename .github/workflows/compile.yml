@@ -1,0 +1,4 @@
+- name: Compilar no Protheus via NAT
+        run: |
+          # O GitHub vai conectar no seu roteador, que vai jogar pro seu Docker
+          tds-cli compile --server ${{ secrets.MEU_DDNS_URL }} --port 1234 ...
