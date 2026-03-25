@@ -21,5 +21,5 @@ jobs:
         run: |
           chmod +x ./bin/advpls
           
-          # Ajuste para o modo legacy do advpls (Argumentos devem estar em uma única string)
-          ./bin/advpls --tds-cli-arguments "compile --server $SERVER --port 1234 --environment $ENV --user $USER_NAME --password \"$PASSWORD\" --program \"${{ github.workspace }}/src\" --include \"${{ github.workspace }}/includes\" --save-logs" tds-cli
+          # Ajuste para o modo legacy do advpls (Uso do = para garantir o parsing dos argumentos)
+          ./bin/advpls --tds-cli-arguments="compile --server $SERVER --port 1234 --environment $ENV --user $USER_NAME --password \"$PASSWORD\" --program \"${{ github.workspace }}/src\" --include \"${{ github.workspace }}/includes\" --save-logs" tds-cli
