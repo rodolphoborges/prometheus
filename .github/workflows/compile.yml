@@ -1,30 +1,19 @@
-name: "Compilacao Protheus 2310"
+name: "CI Protheus 2310"
 on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: "Checkout do Codigo"
+      - name: "Checkout"
         uses: actions/checkout@v4
 
-      - name: "Instalar TDS-CLI (Linux)"
+      - name: "Compilar no Docker Local via IP Publico"
         run: |
-          # 1. Cria a pasta para o binário
-          mkdir -p ./bin
-          
-          # 2. Baixa o pacote zip oficial do TDS-LS (que contém o CLI)
-          # Link baseado na documentação oficial: tds-ls/bin/linux/tds-cli.zip
-          wget https://github.com/totvs/tds-ls/raw/master/bin/linux/tds-cli.zip -O ./bin/tds-cli.zip
-          
-          # 3. Descompacta o binário
-          unzip ./bin/tds-cli.zip -d ./bin/
-          
-          # 4. Dá permissão de execução
+          # 1. Garante permissão de execução no Ubuntu do GitHub
           chmod +x ./bin/tds-cli
-
-      - name: "Compilar Fontes no Protheus"
-        run: |
+          
+          # 2. Executa a compilação apontando para o seu IP 162.120.186.87
           ./bin/tds-cli compile \
             --server ${{ secrets.PROTHEUS_SERVER }} \
             --port 1234 \
