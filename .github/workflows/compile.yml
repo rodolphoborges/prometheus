@@ -1,9 +1,19 @@
-- name: "Configurar Permissoes e Compilar"
+name: "Compilacao Protheus 2310"
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout do Codigo"
+        uses: actions/checkout@v4
+
+      - name: "Configurar Permissoes e Compilar"
         run: |
-          # 1. Garante permissão de execução
+          # Garante permissão de execução ao binário que está no seu repo
           chmod +x ./bin/advpls
           
-          # 2. Executa usando o modo 'tds-cli' antes do 'compile'
+          # Executa usando o modo 'tds-cli' antes do comando 'compile'
           ./bin/advpls tds-cli compile \
             --server ${{ secrets.PROTHEUS_SERVER }} \
             --port 1234 \
