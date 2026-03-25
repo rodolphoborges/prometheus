@@ -21,9 +21,9 @@ jobs:
         run: |
           chmod +x ./bin/advpls
           
-          # Criar template do script (formato oficial TDS-LS para o modo cli)
+          # Criar template do script (Híbrido: satisfaz versões antigas e novas parsers)
           cat <<'EOF' > compile_script.template
-          [ACTION_01]
+          [authentication]
           action=authentication
           server=$SERVER
           port=1234
@@ -32,7 +32,7 @@ jobs:
           user=$USER_NAME
           psw=$PASSWORD
           
-          [ACTION_02]
+          [compile]
           action=compile
           program=${GITHUB_WORKSPACE}/src
           includes=${GITHUB_WORKSPACE}/includes
@@ -42,13 +42,13 @@ jobs:
           # Injetar variáveis de ambiente de forma segura
           envsubst < compile_script.template > compile_script.ini
           
-          # O TDS-CLI (LS) exige encoding CP1252 para scripts de execução
+          # Converter para CRLF (Windows) e CP1252 (ANSI) - Essencial para ferramentas TOTVS
+          sed -i 's/$/\r/' compile_script.ini
           iconv -f UTF-8 -t CP1252 compile_script.ini > compile_script_ansi.ini
           
-          # Debug: Verificar se o script foi criado e qual seu conteúdo (UTF-8)
+          # Debug: Verificar o script gerado
           echo "--- DEBUG: SCRIPT TEMPLATE ---"
           cat compile_script.ini
-          ls -l compile_script_ansi.ini
           
-          # Executar compilação (Opções devem vir ANTES do modo 'cli')
-          ./bin/advpls --log-file advpls.log cli compile_script_ansi.ini || (echo "--- LOG DE ERRO ---" && cat advpls.log && exit 1)
+          # Executar compilação (Modo cli com log ao final)
+          ./bin/advpls cli compile_script_ansi.ini --log-file advpls.log || (echo "--- LOG DE ERRO ---" && cat advpls.log && exit 1)
