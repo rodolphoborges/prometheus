@@ -21,14 +21,14 @@ jobs:
         run: |
           chmod +x ./bin/advpls
           
-          # Criar script de execução usando printf (Garante CRLF e evita problemas de expansão do shell)
-          printf "[ACTION_01]\r\naction=authentication\r\nserver=%s\r\nport=1234\r\nsecure=0\r\nenvironment=%s\r\nuser=%s\r\npsw=%s\r\n\r\n[ACTION_02]\r\naction=compile\r\nprogram=%s/src\r\nincludes=%s/includes\r\nrecompile=T\r\n" \
+          # Criar script de execução via printf (Garante CRLF e parâmetros mandatórios para Release 2310)
+          printf "[ACTION_01]\r\naction=authentication\r\nserver=%s\r\nport=1234\r\nsecure=1\r\nbuild=7.00.210324P\r\nenvironment=%s\r\nuser=%s\r\npsw=%s\r\n\r\n[ACTION_02]\r\naction=compile\r\nprogram=%s/src\r\nincludes=%s/includes\r\nrecompile=T\r\n" \
             "$SERVER" "$ENV" "$USER_NAME" "$PASSWORD" "$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE" > compile_script.ini
           
           # Garantir encoding CP1252 (ANSI) - Requisito estrito do advpls
           iconv -f UTF-8 -t CP1252 compile_script.ini > compile_script_ansi.ini
           
-          # Debug: Confirmar o arquivo gerado (Sem exibir conteúdo sensível)
+          # Debug: Confirmar a criação do arquivo (Sem exibir conteúdo sensível)
           echo "--- DEBUG: STATUS ---"
           ls -l $(pwd)/compile_script_ansi.ini
           
