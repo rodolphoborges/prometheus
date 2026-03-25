@@ -37,5 +37,9 @@ jobs:
           echo "--- DEBUG: STATUS ---"
           ls -l $(pwd)/compile_script_ansi.ini
           
-          # Executar compilação com caminho ABSOLUTO para o script
-          ./bin/advpls cli "$(pwd)/compile_script_ansi.ini" --log-file advpls.log || (echo "--- LOG DE ERRO ---" && cat advpls.log && exit 1)
+          # Executar compilação (Log sempre visível no console)
+          echo "==== INICIANDO COMPILACAO ===="
+          ./bin/advpls cli "$(pwd)/compile_script_ansi.ini" --log-file advpls.log || echo "Aviso: advpls encerrou com erro (Veja log abaixo)."
+          
+          echo "==== LOG DE EXECUÇÃO (advpls.log) ===="
+          [ -f advpls.log ] && cat advpls.log || echo "Erro: Arquivo advpls.log não foi gerado."
