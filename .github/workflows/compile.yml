@@ -1,28 +1,21 @@
-name: Compilar Protheus via GitHub
-on: [push]
+- name: Instalar Node.js e TDS-CLI
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Versão estável do Node
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout do Código
-        uses: actions/checkout@v4
-
-      - name: Instalar TDS-CLI (TOTVS)
+      - name: Instalar TDS-CLI via NPM
         run: |
-          # Baixa o TDS-CLI para Linux (GitHub Actions roda em Ubuntu)
-          wget https://github.com/totvs/tds-vscode/raw/master/tds-cli/bin/linux/tds-cli -O tds-cli
-          chmod +x tds-cli
+          npm install -g @totvs/tds-cli
+          # O comando passa a ser 'tds-cli' diretamente no PATH
 
       - name: Compilar Fontes no Protheus Remoto
         run: |
-          ./tds-cli compile \
+          tds-cli compile \
             --server ${{ secrets.PROTHEUS_SERVER }} \
             --port 1234 \
             --environment ${{ secrets.PROTHEUS_ENV }} \
             --user ${{ secrets.PROTHEUS_USER }} \
             --password "${{ secrets.PROTHEUS_PASS }}" \
             --program "${{ github.workspace }}/src" \
-            --include "https://raw.githubusercontent.com/rodolphoborges/prometheus/main/includes" \
+            --include "${{ github.workspace }}/includes" \
             --save-logs
