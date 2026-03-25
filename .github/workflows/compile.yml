@@ -21,5 +21,25 @@ jobs:
         run: |
           chmod +x ./bin/advpls
           
-          # Ajuste para o modo legacy do advpls (Uso do -- para separar argumentos do binário)
-          ./bin/advpls --tds-cli-arguments tds-cli -- compile --server $SERVER --port 1234 --environment $ENV --user $USER_NAME --password "$PASSWORD" --program "${{ github.workspace }}/src" --include "${{ github.workspace }}/includes" --save-logs
+          # Criar script de execução para o modo cli (mais robusto para automação)
+          cat <<EOF > compile_script.ini
+          [authentication]
+          server=$SERVER
+          port=1234
+          secure=0
+          environment=$ENV
+          user=$USER_NAME
+          psw=$PASSWORD
+          
+          [compile]
+          action=compile
+          program=${GITHUB_WORKSPACE}/src
+          includes=${GITHUB_WORKSPACE}/includes
+          recompile=T
+          EOF
+          
+          # O TDS-CLI (LS) exige encoding CP1252 para scripts de execução
+          iconv -f UTF-8 -t CP1252 compile_script.ini > compile_script_ansi.ini
+          
+          # Executar compilação via modo cli
+          ./bin/advpls cli compile_script_ansi.ini
