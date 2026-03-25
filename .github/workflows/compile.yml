@@ -1,14 +1,22 @@
-- name: Instalar Node.js e TDS-CLI
+name: Compilacao Protheus
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do Codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Versão estável do Node
+          node-version: '20'
 
-      - name: Instalar TDS-CLI via NPM
-        run: |
-          npm install -g @totvs/tds-cli
-          # O comando passa a ser 'tds-cli' diretamente no PATH
+      - name: Instalar TDS-CLI
+        run: npm install -g @totvs/tds-cli
 
-      - name: Compilar Fontes no Protheus Remoto
+      - name: Compilar no Protheus
         run: |
           tds-cli compile \
             --server ${{ secrets.PROTHEUS_SERVER }} \
