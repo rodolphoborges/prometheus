@@ -45,5 +45,10 @@ jobs:
           # O TDS-CLI (LS) exige encoding CP1252 para scripts de execução
           iconv -f UTF-8 -t CP1252 compile_script.ini > compile_script_ansi.ini
           
-          # Executar compilação com log habilitado para diagnóstico
-          ./bin/advpls cli compile_script_ansi.ini --log-file advpls.log || (echo "--- LOG DE ERRO ---" && cat advpls.log && exit 1)
+          # Debug: Verificar se o script foi criado e qual seu conteúdo (UTF-8)
+          echo "--- DEBUG: SCRIPT TEMPLATE ---"
+          cat compile_script.ini
+          ls -l compile_script_ansi.ini
+          
+          # Executar compilação (Opções devem vir ANTES do modo 'cli')
+          ./bin/advpls --log-file advpls.log cli compile_script_ansi.ini || (echo "--- LOG DE ERRO ---" && cat advpls.log && exit 1)
