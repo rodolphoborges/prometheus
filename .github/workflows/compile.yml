@@ -26,9 +26,17 @@ jobs:
           timeout 5s bash -c "cat < /dev/null > /dev/tcp/$SERVER/1234" && echo "Sucesso: Servidor alcançável via TCP." || echo "ALERTA: Servidor inacessível via porta 1234 (Verifique o Firewall)."
           echo "============================="
 
-          # Criar script de execução via printf (Baseado na validação real do AppServer: build 7.00.210324P e secure 0)
-          printf "[authentication]\r\naction=authentication\r\nserver=%s\r\nport=1234\r\nsecure=0\r\nbuild=7.00.210324P\r\nenvironment=%s\r\nuser=%s\r\nusername=%s\r\npsw=%s\r\npassword=%s\r\n\r\n[compile]\r\naction=compile\r\nprogram=%s/src\r\nincludes=%s/includes\r\nrecompile=T\r\n" \
-            "$SERVER" "$ENV" "$USER_NAME" "$USER_NAME" "$PASSWORD" "$PASSWORD" "$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE" > compile_script.ini
+          # Gerar lista de arquivos para compilação (Resolve erro de diretório sem extensão)
+          FILES=$(find "$(pwd)/src" -name "*.prw" -o -name "*.tlpp" -o -name "*.prg" | tr '\n' ',' | sed 's/,$//')
+          if [ -z "$FILES" ]; then
+            echo "ERRO: Nenhum arquivo fonte (.prw, .tlpp, .prg) encontrado em src/"
+            exit 1
+          fi
+          echo "Arquivos para compilar: $FILES"
+
+          # Criar script de execução via printf (Hybrid + Validated params + Program List)
+          printf "[authentication]\r\naction=authentication\r\nserver=%s\r\nport=1234\r\nsecure=0\r\nbuild=7.00.210324P\r\nenvironment=%s\r\nuser=%s\r\nusername=%s\r\npsw=%s\r\npassword=%s\r\n\r\n[compile]\r\naction=compile\r\nprogram=%s\r\nincludes=%s/includes/\r\nrecompile=T\r\n" \
+            "$SERVER" "$ENV" "$USER_NAME" "$USER_NAME" "$PASSWORD" "$PASSWORD" "$FILES" "$GITHUB_WORKSPACE" > compile_script.ini
           
           # Garantir encoding CP1252 (ANSI) - Requisito estrito do advpls
           iconv -f UTF-8 -t CP1252 compile_script.ini > compile_script_ansi.ini
