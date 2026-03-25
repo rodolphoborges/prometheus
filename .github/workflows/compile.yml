@@ -1,20 +1,20 @@
-name: "CI Protheus 2310"
+name: "Compilacao Protheus 2310"
 on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: "Checkout"
+      - name: "Checkout do Codigo"
         uses: actions/checkout@v4
 
-      - name: "Compilar no Docker Local via IP Publico"
+      - name: "Configurar Permissoes e Compilar"
         run: |
-          # 1. Garante permissão de execução no Ubuntu do GitHub
-          chmod +x ./bin/tds-cli
+          # 1. Ajustado para o nome real do ficheiro no seu repo: 'advpls'
+          chmod +x ./bin/advpls
           
-          # 2. Executa a compilação apontando para o seu IP 162.120.186.87
-          ./bin/tds-cli compile \
+          # 2. Executa a compilação usando o binário correto
+          ./bin/advpls compile \
             --server ${{ secrets.PROTHEUS_SERVER }} \
             --port 1234 \
             --environment ${{ secrets.PROTHEUS_ENV }} \
