@@ -8,6 +8,8 @@
 
 O **PROMETHEUS** é um framework profissional para automação de CI/CD em ambientes TOTVS Protheus. Ele permite o gerenciamento e a compilação automática de fontes AdvPL/TLPP utilizando GitHub Actions, integrado perfeitamente com ambientes Protheus rodando em Docker.
 
+> **Aviso legal:** projeto independente, sem afiliação, endosso ou vínculo com a TOTVS. `Protheus`, `AdvPL` e `TLPP` são marcas da TOTVS. Nenhum binário proprietário é distribuído neste repositório — o `advpls`/TDS-CLI deve ser obtido pelo usuário diretamente nos canais oficiais da TOTVS, sob a licença dele.
+
 ## 🚀 Funcionalidades
 
 - **Compilação Automatizada**: Integração completa com `advpls` CLI para compilação remota.
@@ -19,7 +21,7 @@ O **PROMETHEUS** é um framework profissional para automação de CI/CD em ambie
 
 - `src/`: Fontes do projeto (.prw, .tlpp, .prg).
 - `includes/`: Arquivos de cabeçalho (.ch).
-- `bin/`: Binários e utilitários da TDS-CLI.
+- `bin/`: (vazio no git) coloque aqui localmente o `advpls`/TDS-CLI obtido nos canais oficiais TOTVS. Nunca commite binários.
 - `.github/workflows/`: Definições da automação GitHub Actions.
 
 ## 🛠️ Instalação e Uso

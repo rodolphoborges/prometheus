@@ -1,0 +1,12 @@
+# Binários proprietários TOTVS — nunca versionar. Obtenha via canais oficiais.
+bin/
+*.exe
+*.dll
+
+# Segredos e ambiente
+.env
+.env.local
+
+# Sistema
+.DS_Store
+Thumbs.db
